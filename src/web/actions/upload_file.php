@@ -15,7 +15,7 @@ if (isset($_FILES['file'])) {
     $file_error = $file['error'];
 
     $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-    $allowed_ext = ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'];
+    $allowed_ext = ['jpg', 'png'];
 
     if (!isAllowedExtension($file_ext, $allowed_ext)) {
         showErrorAndRedirect('File extension not allowed', $redirect_url);
@@ -29,13 +29,20 @@ if (isset($_FILES['file'])) {
         showErrorAndRedirect('An error occurred during file upload', $redirect_url);
     }
 
-    $new_file_name = generateUniqueFileName($file_ext);
-    $file_destination = $destination . $new_file_name;
+    $new_file_name = generateUniqueFileName();
+    $file_destination = $destination . $new_file_name . '.'.$file_ext;
+    $file_thumb_destination = $destination . $new_file_name . '_thumb.' . $file_ext;
 
     if (!move_uploaded_file($file_tmp, $file_destination)) {
         showErrorAndRedirect('File upload failed', $redirect_url);
     }
 
+    createThumbnail(
+        $file_destination,
+        $file_thumb_destination,
+        200,
+        125
+    );
     showMessageAndRedirect('File uploaded successfully', $redirect_url);
 }
 
@@ -52,8 +59,8 @@ function isValidFileError($error) {
     return $error === 0;
 }
 
-function generateUniqueFileName($extension) {
-    return uniqid('', true) . '.' . $extension;
+function generateUniqueFileName() {
+    return uniqid('', true);
 }
 
 // Unified helper to handle errors and redirection
@@ -71,12 +78,29 @@ function showMessageAndRedirect($message, $url) {
 
 function redirect($url) {
     clearOutputBuffer();
-    header('Location: ' . $url);
-    exit(); // Ensure the script halts after redirect
+//    header('Location: ' . $url);
+//    exit(); // Ensure the script halts after redirect
 }
 
 function clearOutputBuffer() {
     if (ob_get_length()) {
         ob_end_clean(); // Clear the buffer to prevent 'headers already sent' errors
     }
+}
+
+function createThumbnail($source, $destination, $width, $height) {
+    if (!file_exists($source)) {
+        throw new Exception('Source file does not exist: ' . $source);
+    }
+
+    list($old_width, $old_height) = getimagesize($source);
+    $old_image = imagecreatefromjpeg($source);
+    if ($old_image === false) {
+        throw new Exception('Failed to load image from source: ' . $source);
+    }
+    $new_image = imagecreatetruecolor($width, $height);
+
+    imagecopyresampled($new_image, $old_image, 0, 0, 0, 0, $width, $height, $old_width, $old_height);
+
+    imagejpeg($new_image, $destination);
 }
