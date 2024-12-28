@@ -1,12 +1,19 @@
 <?php
-$destination = __DIR__ . '/../user_uploads/';
-const MAX_FILE_SIZE = 20000000; // Maximum allowed file size in bytes
-$redirect_url = '/../home.php';
+define('KB', 1024);
+define('MB', 1048576);
+define('GB', 1073741824);
+
+const destination = __DIR__ . '/../user_uploads/';
+const watermark_path = __DIR__ . '/../img/pg_logo.jpg';
+const MAX_FILE_SIZE = 1*MB; // Maximum allowed file size in bytes
+const redirect_url = '/../home.php';
 
 // Use output buffering to prevent warnings if any output is accidentally generated
 ob_start();
+saveFile();
+function saveFile() {
 
-if (isset($_FILES['file'])) {
+    if (!isset($_FILES['file'])) {return;}
     $file = $_FILES['file'];
 
     $file_name = $file['name'];
@@ -18,32 +25,56 @@ if (isset($_FILES['file'])) {
     $allowed_ext = ['jpg', 'png'];
 
     if (!isAllowedExtension($file_ext, $allowed_ext)) {
-        showErrorAndRedirect('File extension not allowed', $redirect_url);
+        showMessageAndRedirect('File extension not allowed');
+        return;
     }
 
     if (!isValidFileSize($file_size)) {
-        showErrorAndRedirect('File size exceeds the limit', $redirect_url);
+        showMessageAndRedirect('File size exceeds the limit, max file size is 1MB');
+        return;
     }
 
     if (!isValidFileError($file_error)) {
-        showErrorAndRedirect('An error occurred during file upload', $redirect_url);
+        $phpFileUploadErrors = array(
+            0 => 'There is no error, the file uploaded with success',
+            1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+            2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+            3 => 'The uploaded file was only partially uploaded',
+            4 => 'No file was uploaded',
+            6 => 'Missing a temporary folder',
+            7 => 'Failed to write file to disk.',
+            8 => 'A PHP extension stopped the file upload.',
+        );
+        if ($file_error === 1){
+            showMessageAndRedirect('File size exceeds the limit, max file size is 1MB');
+        }else{
+            showMessageAndRedirect($phpFileUploadErrors[$file_error]);
+        }
+        return;
     }
 
     $new_file_name = generateUniqueFileName();
-    $file_destination = $destination . $new_file_name . '.'.$file_ext;
-    $file_thumb_destination = $destination . $new_file_name . '_thumb.' . $file_ext;
 
-    if (!move_uploaded_file($file_tmp, $file_destination)) {
-        showErrorAndRedirect('File upload failed', $redirect_url);
+    $file_original_destination = destination . $new_file_name . '.'.$file_ext;
+    $file_watermarked_destination = destination . $new_file_name . '_watermark.'.$file_ext;
+    $file_thumb_destination = destination . $new_file_name . '_thumb.' . $file_ext;
+
+    if (!move_uploaded_file($file_tmp, $file_original_destination)) {
+        showMessageAndRedirect('File upload failed, move_uploaded_file error');
+        return;
     }
 
     createThumbnail(
-        $file_destination,
+        $file_original_destination,
         $file_thumb_destination,
         200,
         125
     );
-    showMessageAndRedirect('File uploaded successfully', $redirect_url);
+    addWatermark(
+        $file_original_destination,
+        $file_watermarked_destination,
+        watermark_path
+    );
 }
 
 // Functions
@@ -64,28 +95,47 @@ function generateUniqueFileName() {
 }
 
 // Unified helper to handle errors and redirection
-function showErrorAndRedirect($message, $url) {
-    clearOutputBuffer();
-    echo $message;
-    redirect($url);
-}
-
-function showMessageAndRedirect($message, $url) {
-    clearOutputBuffer();
-    echo $message;
-    redirect($url);
+function showMessageAndRedirect($message) {
+    echo
+    "<div class='error_container'>
+            <div class='error_message'><p>".
+    $message
+    ."</p></div></div>";
 }
 
 function redirect($url) {
     clearOutputBuffer();
-//    header('Location: ' . $url);
-//    exit(); // Ensure the script halts after redirect
+    header('Location: ' . $url);
+    exit(); // Ensure the script halts after redirect
 }
 
 function clearOutputBuffer() {
     if (ob_get_length()) {
         ob_end_clean(); // Clear the buffer to prevent 'headers already sent' errors
     }
+}
+
+function addWatermark($source, $destination, $watermark_path) {
+    if (!file_exists($source) or !file_exists($watermark_path)) {
+        throw new Exception('Source file does not exist: ' . $source);
+    }
+    list($w_width, $w_height) = getimagesize($watermark_path);
+
+    $source = imagecreatefromjpeg($source);
+    $watermark_path = imagecreatefromjpeg($watermark_path);
+
+    $watermark_scale = 2;
+    $w_width = $w_width * $watermark_scale;
+    $w_height = $w_height * $watermark_scale;
+
+    $watermark_path = imagescale($watermark_path, $w_width, $w_height);
+
+    $white = imagecolorallocate($watermark_path, 255, 255, 255);
+    imagecolortransparent($watermark_path, $white);
+
+
+    imagecopymerge($source, $watermark_path, 100, 100, 0, 0, $w_width, $w_height, 50);
+    imagejpeg($source, $destination);
 }
 
 function createThumbnail($source, $destination, $width, $height) {

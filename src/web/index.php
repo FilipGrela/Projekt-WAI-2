@@ -2,6 +2,8 @@
 <html lang="pl">
 <head>
     <link rel="stylesheet" href="css/style.css">
+    <title>Logowanie</title>
+    <link rel="icon" href="img/travel.png" type="image/x-icon">
 </head>
 <body>
 
