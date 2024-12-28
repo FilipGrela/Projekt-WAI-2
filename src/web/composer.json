@@ -1,0 +1,15 @@
+{
+  "name": "vendor_name/wai-shared-folder",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "fgrel",
+      "email": "fgrela09@gmail.com"
+    }
+  ],
+  "require": {
+    "mongodb/mongodb": "^1.1"
+  }
+}
