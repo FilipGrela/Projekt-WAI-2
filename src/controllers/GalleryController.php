@@ -5,17 +5,20 @@ class GalleryController
     public function index() {
         $imageModel = new ImageModel();
         $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $images = $imageModel->getPaginatedImages($currentPage, 2);
+        $images = $imageModel->getPaginatedImages($currentPage, 8);
         $paginationLinks = $imageModel->getpaginationLinks(
             $images['pagination']['currentPage'],
             $images['pagination']['perPage'],
             $images['pagination']['totalPages']
         );
+        $image_upload_message = '';
         // Pass images to the view
         require_once __DIR__ . '/../views/gallery.php';
     }
 
     public function upload() {
+        unset($_SESSION['image_upload_message']);
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['file']['name'])) {
             $title = htmlspecialchars($_POST['image_title'] ?? '');
             $author = htmlspecialchars($_POST['image_author'] ?? '');
@@ -24,7 +27,8 @@ class GalleryController
 //
             try {
                 // Pass file details and metadata to the model
-                $message = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
+//                $this->image_upload_message = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
+                $_SESSION['image_upload_message'] = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
 
                 // Redirect to the gallery page after successful upload
                 header("Location: /gallery");

@@ -4,6 +4,8 @@ require_once __DIR__ . '/../web/vendor/autoload.php';
 
 require_once __DIR__ . '/../core/Router.php';
 
+session_start();
+
 $router = new Router();
 
 // Define routes

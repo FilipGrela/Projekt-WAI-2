@@ -29,7 +29,7 @@
             <div class="form-field">
                 <label for="password_rep">Powtórz hasło:</label>
                 <input type="password" id="password_rep" name="password" placeholder="Hasło" required>
-                <p style="color: #70242f">Tutaj error</p>
+                <br><p class="error_message" ">Tutaj error</p>
             </div>
 
             <div style="display: flex; flex-direction: row; justify-content: center;">

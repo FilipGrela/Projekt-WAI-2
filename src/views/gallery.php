@@ -23,6 +23,9 @@
             <label for="file" class="form-label">Choose File:</label>
             <input type="file" name="file" id="file" class="form-field" >
             <button type="submit" class="button">Upload Image</button>
+            <?php if (isset($_SESSION['image_upload_message']) && $_SESSION['image_upload_message']): ?>
+                <br><p class="error_message"><?= $_SESSION['image_upload_message']; ?></p>
+            <?php endif; ?>
         </form>
     </div>
     <h1 style="text-shadow: rgba(0, 0, 0, 0.5) 1px 0 10px;">Galeria</h1>

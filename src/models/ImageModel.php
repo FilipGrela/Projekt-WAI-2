@@ -110,7 +110,7 @@ class ImageModel {
     }
 
 
-    private function addWatermark($source, $destination, $watermark_path, $watermark_text) {
+    private function addWatermark($source, $destination, $watermark_path, $watermark_text = '') {
         if (!file_exists($source) or !file_exists($watermark_path)) {
             throw new Exception('Source file does not exist: ' . $source);
         }
