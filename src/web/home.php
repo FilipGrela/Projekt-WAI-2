@@ -12,13 +12,18 @@
     <div id="gallery" class="round-corners">
         <form action="" method="post" enctype="multipart/form-data" class="upload-form">
             <h2>Upload Your Image</h2>
+
+            <label for="image_title" class="form-label">Title:</label>
+            <input type="text" name="image_title" id="image_title" class="form-field" required>
+
+            <label for="image_author" class="form-label">Author:</label>
+            <input type="text" name="image_author" id="image_author" class="form-field" required>
             <label for="file" class="form-label">Choose File:</label>
-            <input type="file" name="file" id="file" class="form-field">
+            <input type="file" name="file" id="file" class="form-field" required>
             <button type="submit" name="SubmitButton" class="button">Upload Image</button>
         </form>
         <?php
         if(isset($_POST['SubmitButton'])){
-            //check if form was submitted
             require'actions/upload_file.php';
         }
         ?>

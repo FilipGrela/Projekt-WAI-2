@@ -3,6 +3,8 @@ define('KB', 1024);
 define('MB', 1048576);
 define('GB', 1073741824);
 
+require_once __DIR__."/actions.php";
+
 const destination = __DIR__ . '/../user_uploads/';
 const watermark_path = __DIR__ . '/../img/pg_logo.jpg';
 const MAX_FILE_SIZE = 1*MB; // Maximum allowed file size in bytes
@@ -74,6 +76,14 @@ function saveFile() {
         $file_original_destination,
         $file_watermarked_destination,
         watermark_path
+    );
+
+    $user_id = "uid";
+    add_image_to_db(
+        $_POST['image_author'],
+        $_POST['image_title'],
+        $new_file_name,
+        $user_id
     );
 }
 

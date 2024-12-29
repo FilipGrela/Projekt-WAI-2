@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/../actions/actions.php';
 $path = '/user_uploads/';
 $dir = __DIR__ . '/../' . $path;
 $images = glob("$dir*_thumb.{jpg,jpeg,gif,png,bmp,webp}", GLOB_BRACE);
@@ -12,7 +13,23 @@ $currentPageImages = array_slice($images, ($page - 1) * $perPage, $perPage);
 foreach ($currentPageImages as $i) {
     $path_thumb = $path . rawurlencode(basename($i));
     $path_img = str_replace("thumb", "watermark", $path_thumb);
-    echo "<a href='$path_img'><img class='gallery-image' src='$path_thumb' alt='image'></a>";
+
+
+    $image_id = explode("_", rawurlencode(basename($i)))[0];
+    $image_db = get_image_by_name($image_id);
+
+    $title = !empty($image_db['title']) ? $image_db['title'] : 'Unknown';
+    $author = !empty($image_db['author']) ? $image_db['author'] : 'Unknown';
+
+    echo "<div class='gallery-image'>
+        <a href='$path_img'>
+            <img class='gallery-image' src='$path_thumb' alt='image'>
+        </a>
+        <div class='gallery-image-details'>
+            <h3>$title</h3>
+            <p>$author</p>
+        </div>
+    </div>";
 }
 
 if (!$images) {

@@ -107,13 +107,6 @@ section {
     max-width: 1200px;
 }
 
-#gallery {
-    background: var(--color-secondary);
-    padding: 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
 .upload-form {
     margin-bottom: 2rem;
     text-align: center;
@@ -152,6 +145,13 @@ section {
     transform: scale(1.05);
 }
 
+#gallery {
+    background: var(--color-secondary);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -161,12 +161,22 @@ section {
 }
 
 .gallery-image {
+    background-color: #0d1117;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.gallery-image > a > img {
     width: 100%;
     max-width: 200px;
     max-height: 125px;
     border-radius: 0.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s ease;
+}
+
+.gallery-image > div  {
+    padding: 0.5rem;
 }
 
 .error_message{
