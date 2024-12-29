@@ -10,7 +10,12 @@
 <section id="login-container">
     <div class="login-card round-corners">
         <h2>Tworzenie konta</h2>
-        <form class="login-register-form" id="register-form" action="actions/actions.php">
+        <form class="login-register-form" id="register-form" action="">
+
+            <div class="form-field">
+                <label for="email">Login:</label>
+                <input type="email" id="email" name="email" placeholder="your@email.here" required>
+            </div>
 
             <div class="form-field">
                 <label for="login">Login:</label>
@@ -24,12 +29,13 @@
             <div class="form-field">
                 <label for="password_rep">Powtórz hasło:</label>
                 <input type="password" id="password_rep" name="password" placeholder="Hasło" required>
+                <p style="color: #70242f">Tutaj error</p>
             </div>
 
             <div style="display: flex; flex-direction: row; justify-content: center;">
                 <div class="login-buttons">
-                    <button class="button" type="submit" form="register-form">Stwórz konto</button>
-                    <a class="button" href="index.php">Zaloguj</a>
+                    <button class="button" name="SubmitButton" type="submit" >Stwórz konto</button>
+                    <a class="button" href="/login">Zaloguj</a>
                 </div>
             </div>
 

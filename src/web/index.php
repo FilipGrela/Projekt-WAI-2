@@ -1,36 +1,32 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <link rel="stylesheet" href="css/style.css">
-    <title>Logowanie</title>
-    <link rel="icon" href="img/travel.png" type="image/x-icon">
-</head>
-<body>
+<?php
+// public/index.php
+require_once __DIR__ . '/../web/vendor/autoload.php';
 
-<section id="login-container">
-    <div class="login-card round-corners">
-        <h2>Logowanie</h2>
-        <form class="login-register-form" id="login-form">
+require_once __DIR__ . '/../core/Router.php';
 
-            <div class="form-field">
-                <label for="login">Login:</label>
-                <input type="text" id="login" name="login" placeholder="Login" required>
-            </div>
+$router = new Router();
 
-            <div class="form-field">
-                <label for="password">Hasło:</label>
-                <input type="password" id="password" name="password" placeholder="Hasło" required>
-            </div>
+// Define routes
+$router->add('/login', [
+    'controller' => 'LoginController',
+    'method' => 'index'
+]);
 
-            <div style="display: flex; flex-direction: row; justify-content: center;">
-                <div class="login-buttons">
-                    <button class="button" type="submit" form="login-form">Zaloguj</button>
-                    <a class="button" href="register.php">Stwórz konto</a>
-                </div>
-            </div>
+$router->add('/register', [
+    'controller' => 'RegisterController',
+    'method' => 'index'
+]);
 
-        </form>
-    </div>
-</section>
-</body>
-</html>
+$router->add('/gallery', [
+    'controller' => 'GalleryController',
+    'method' => 'index'
+]);
+
+$router->add('/upload', [
+    'controller' => 'GalleryController',
+    'method' => 'upload'
+]);
+
+// Process the current request
+$requestUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$router->dispatch($requestUrl);

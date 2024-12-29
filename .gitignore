@@ -1,4 +1,5 @@
 user_uploads/
+**/images/*
 
 composer.phar
 **/vendor/
