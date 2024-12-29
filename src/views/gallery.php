@@ -18,6 +18,8 @@
 
             <label for="image_author" class="form-label">Author:</label>
             <input type="text" name="image_author" id="image_author" class="form-field" >
+            <label for="watermark-text" class="form-label">Watermark:</label>
+            <input type="text" name="watermark-text" id="watermark-text" class="form-field" >
             <label for="file" class="form-label">Choose File:</label>
             <input type="file" name="file" id="file" class="form-field" >
             <button type="submit" class="button">Upload Image</button>

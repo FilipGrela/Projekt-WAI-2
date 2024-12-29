@@ -19,11 +19,12 @@ class GalleryController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['file']['name'])) {
             $title = htmlspecialchars($_POST['image_title'] ?? '');
             $author = htmlspecialchars($_POST['image_author'] ?? '');
+            $watermark_text = htmlspecialchars($_POST['image_author'] ?? '');
             $imageModel = new ImageModel();
 //
             try {
                 // Pass file details and metadata to the model
-                $message = $imageModel->upload($_FILES['file'], $title, $author);
+                $message = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
 
                 // Redirect to the gallery page after successful upload
                 header("Location: /gallery");

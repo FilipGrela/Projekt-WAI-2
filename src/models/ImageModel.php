@@ -19,7 +19,7 @@ class ImageModel {
         $this->publicPath = '/images/';              // Public-accessible path for images
     }
 
-    function upload($file, $title, $author)
+    function upload($file, $title, $author, $watermark_text)
     {
         $file_name = $file['name'];
         $file_tmp = $file['tmp_name'];
@@ -77,7 +77,8 @@ class ImageModel {
         $this->addWatermark(
             $file_original_destination,
             $file_watermarked_destination,
-            watermark_path
+            watermark_path,
+            $watermark_text
         );
 
         $user_id = "uid";
@@ -109,7 +110,7 @@ class ImageModel {
     }
 
 
-    private function addWatermark($source, $destination, $watermark_path) {
+    private function addWatermark($source, $destination, $watermark_path, $watermark_text) {
         if (!file_exists($source) or !file_exists($watermark_path)) {
             throw new Exception('Source file does not exist: ' . $source);
         }
@@ -129,6 +130,12 @@ class ImageModel {
 
 
         imagecopymerge($source, $watermark_path, 100, 100, 0, 0, $w_width, $w_height, 50);
+
+        $font_path = __DIR__ . '/../web/fonts/Freedom-10eM.ttf';
+        $black = imagecolorallocatealpha($watermark_path, 0, 0, 0, 50);
+        imagettftext($source, 50, 0, 200, 550, $black, $font_path, $watermark_text);
+
+
         imagejpeg($source, $destination);
     }
 
