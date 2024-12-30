@@ -38,6 +38,11 @@ class Router {
         }
     }
 
+    public function redirect($location){
+        header("Location: $location");
+        exit;
+    }
+
     // Default 404 error handler
     private function error404($message) {
         http_response_code(404);

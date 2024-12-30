@@ -10,7 +10,7 @@
 <body>
 <section>
     <div id="gallery" class="round-corners">
-        <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+        <form action="/gallery/upload" method="post" enctype="multipart/form-data" class="upload-form">
             <h2>Upload Your Image</h2>
 
             <label for="image_title" class="form-label">Title:</label>
@@ -18,8 +18,8 @@
 
             <label for="image_author" class="form-label">Author:</label>
             <input type="text" name="image_author" id="image_author" class="form-field" >
-            <label for="watermark-text" class="form-label">Watermark:</label>
-            <input type="text" name="watermark-text" id="watermark-text" class="form-field" >
+            <label for="watermark_text" class="form-label">Watermark:</label>
+            <input type="text" name="watermark_text" id="watermark_text" class="form-field" >
             <label for="file" class="form-label">Choose File:</label>
             <input type="file" name="file" id="file" class="form-field" >
             <button type="submit" class="button">Upload Image</button>

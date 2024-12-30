@@ -13,6 +13,10 @@ class GalleryController
         );
         $image_upload_message = '';
         // Pass images to the view
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /login");
+            exit;
+        }
         require_once __DIR__ . '/../views/gallery.php';
     }
 
@@ -22,12 +26,11 @@ class GalleryController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['file']['name'])) {
             $title = htmlspecialchars($_POST['image_title'] ?? '');
             $author = htmlspecialchars($_POST['image_author'] ?? '');
-            $watermark_text = htmlspecialchars($_POST['image_author'] ?? '');
+            $watermark_text = htmlspecialchars($_POST['watermark_text'] ?? '');
             $imageModel = new ImageModel();
-//
+
             try {
                 // Pass file details and metadata to the model
-//                $this->image_upload_message = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
                 $_SESSION['image_upload_message'] = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
 
                 // Redirect to the gallery page after successful upload

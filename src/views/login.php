@@ -10,7 +10,7 @@
 <section id="login-container">
     <div class="login-card round-corners">
         <h2>Logowanie</h2>
-        <form class="login-register-form" id="login-form">
+        <form class="login-register-form" id="login-form" action="/login/login_user" method="post">
 
             <div class="form-field">
                 <label for="login">Login:</label>
@@ -28,6 +28,10 @@
                     <a class="button" href="/register">Stwórz konto</a>
                 </div>
             </div>
+
+            <?php if (isset($_SESSION['login_message']) && $_SESSION['login_message']): ?>
+                <br><p class="error_message"><?= $_SESSION['login_message'] ?></p>
+            <?php endif; ?>
 
         </form>
     </div>

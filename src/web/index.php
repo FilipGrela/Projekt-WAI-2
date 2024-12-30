@@ -9,9 +9,20 @@ session_start();
 $router = new Router();
 
 // Define routes
+
+$router->add('/', [
+    'controller' => 'LoginController',
+    'method' => 'index'
+]);
+
 $router->add('/login', [
     'controller' => 'LoginController',
     'method' => 'index'
+]);
+
+$router->add('/login/login_user', [
+    'controller' => 'LoginController',
+    'method' => 'login_user'
 ]);
 
 $router->add('/register', [
@@ -19,12 +30,17 @@ $router->add('/register', [
     'method' => 'index'
 ]);
 
+$router->add('/register/add_user', [
+    'controller' => 'RegisterController',
+    'method' => 'add_user'
+]);
+
 $router->add('/gallery', [
     'controller' => 'GalleryController',
     'method' => 'index'
 ]);
 
-$router->add('/upload', [
+$router->add('/gallery/upload', [
     'controller' => 'GalleryController',
     'method' => 'upload'
 ]);
