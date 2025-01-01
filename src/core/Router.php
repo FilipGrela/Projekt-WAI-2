@@ -38,8 +38,10 @@ class Router {
         }
     }
 
-    public function redirect($location){
-        header("Location: $location");
+    public function redirect($location, $parameters = '')
+    {
+        $url = $location . $parameters;
+        header("Location: $url");
         exit;
     }
 

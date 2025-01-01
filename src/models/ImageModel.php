@@ -6,20 +6,21 @@ define('GB', 1073741824);
 const watermark_path = __DIR__ . '/../web/img/pg_logo.jpg';
 const MAX_FILE_SIZE = 1*MB; // Maximum allowed file size in bytes
 
-//require_once  mongo model
 require_once __DIR__ . '/../core/Database.php';
 
 class ImageModel {
     private $basePath;
     private $publicPath;
+    private $database;
 
 
     public function __construct() {
         $this->basePath = __DIR__ . '/../web/images/' . $_SESSION['user_id'] .'/';// Public-accessible path for images
         $this->publicPath = '/images/' . $_SESSION['user_id'] . '/';
+        $this->database = new Database();
     }
 
-    function upload($file, $title, $author, $watermark_text)
+    function upload($file, $watermark_text)
     {
         $file_name = $file['name'];
         $file_tmp = $file['tmp_name'];
@@ -65,7 +66,11 @@ class ImageModel {
         $file_thumb_destination = $this->basePath . $new_file_name . '_thumb.' . $file_ext;
 
 
-        $this->ensureFolderExists($this->basePath);
+        try {
+            $this->ensureFolderExists($this->basePath);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
 
         if (!move_uploaded_file($file_tmp, $file_original_destination)) {
             return 'File upload failed, move_uploaded_file error';
@@ -83,10 +88,7 @@ class ImageModel {
             watermark_path,
             $watermark_text
         );
-
-
-        //przeniesc do core/db
-        (new Database)->add_image_to_db(
+        $this->database->add_image_to_db(
             $_POST['image_author'],
             $_POST['image_title'],
             $new_file_name,
@@ -176,8 +178,9 @@ class ImageModel {
      * @return array Returns an array with paginated images and pagination details.
      */
     public function getPaginatedImages($page = 1, $perPage = 8) {
+
         // Fetch thumbnails only
-        $images = glob("{$this->basePath}*_thumb.{jpg,jpeg,gif,png,bmp,webp}", GLOB_BRACE);
+        $images = isset($_GET['fav']) && $_GET['fav'] ? $this->getFavouriteImagesThumb() : $this->getUserImagesThumb();
 
         // Total Images and Pagination Info
         $totalImages = count($images);
@@ -189,12 +192,12 @@ class ImageModel {
         $imageData = [];
         foreach ($currentPageImages as $imagePath) {
             $thumbnailPath = $this->publicPath . rawurlencode(basename($imagePath)); // Public path for the thumbnail
-            $imagePathFull = str_replace("thumb", "watermark", $thumbnailPath);      // Full-size (watermarked) image
+            $imagePathFull = str_replace("thumb", "watermark", $thumbnailPath);
 
             // Extract Image ID (everything before the underscore)
             $imageId = explode("_", rawurlencode(basename($imagePath)))[0];
             // Retrieve metadata from the database for the image ID
-            $imageDb = (new Database())->get_image_by_name($imageId); // Assuming this function fetches the metadata (title, author)
+            $imageDb = $this->database->get_image_by_name($imageId);
             $imageData[] = [
                 'id' => $imageId,
                 'thumbnail' => $thumbnailPath,
@@ -214,6 +217,43 @@ class ImageModel {
                 'perPage' => $perPage,
             ],
         ];
+    }
+
+    function getFavouriteImagesThumb(){
+        $images = $this->getUserImagesThumb();
+        $favourite_images = [];
+
+        if (!isset($_SESSION['favourite_images'])) {
+            return [];
+        }
+
+        foreach ($images as $image) {
+            $image_id = explode("_", rawurlencode(basename($image)));
+            if(in_array($image_id[0], $_SESSION['favourite_images'])){
+                $favourite_images[] = $image;
+            }
+        }
+        return $favourite_images;
+    }
+
+    function addFavouriteImages($selectedImages){
+        if (!isset($_SESSION['favourite_images'])) {
+            $_SESSION['favourite_images'] = [];
+        }
+        $_SESSION['favourite_images'] = array_merge($_SESSION['favourite_images'], $selectedImages);
+    }
+
+
+    function removeFavouriteImages($selectedImages)
+    {
+        if (!empty($_SESSION['favourite_images'])) {
+            $_SESSION['favourite_images'] = array_diff($_SESSION['favourite_images'], $selectedImages);
+        }
+    }
+
+    function getUserImagesThumb()
+    {
+        return glob("{$this->basePath}*_thumb.{jpg,jpeg,gif,png,bmp,webp}", GLOB_BRACE);
     }
 
     function getpaginationLinks($page = 1, $perPage = 8, $totalPages){

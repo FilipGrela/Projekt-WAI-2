@@ -115,6 +115,8 @@ h1 {
 }
 
 section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
     width: 90%;
     max-width: 1200px;
 }
@@ -161,14 +163,15 @@ section {
     transform: scale(1.05);
 }
 
-#gallery {
+.gallery-container {
     background: var(--color-secondary);
-    padding: 1.5rem;
+    padding: 5rem;
     border-radius: 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-.gallery {
+.gallery > form {
+    padding: 2rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
@@ -178,9 +181,15 @@ section {
 }
 
 .gallery-image {
+    width: 200px;
+    position: relative;
     background-color: #0d1117;
     border-radius: 0.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.gallery-image:hover {
+    transform: scale(1.05);
 }
 
 .gallery-image > a > img {
@@ -194,6 +203,12 @@ section {
 
 .gallery-image > div  {
     padding: 0.5rem;
+}
+
+.gallery-image-details > p, h3 {
+    max-height: 6.5rem;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 .error_message{
@@ -211,6 +226,95 @@ section {
     flex-direction: column;
 }
 
-.gallery-image:hover {
-    transform: scale(1.05);
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+}
+
+
+.user-info {
+    border: 1px solid var(--color-line);
+    border-radius: 5px;
+    padding: 0.5rem;
+}
+
+.favourites{
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.image-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transform: scale(1.5);
+    z-index: 10;
+    cursor: pointer;
+
+
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-accent-1);
+    border-radius: 5px;
+    background-color: var(--color-secondary);
+    appearance: none;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.image-checkbox:hover {
+    background-color: var(--color-accent-1);
+    border-color: var(--color-accent-3);
+}
+
+.image-checkbox:checked {
+    border-color: var(--color-accent-2);
+    transform: scale(1.6);
+}
+
+.image-checkbox:checked::after {
+    content: '✔';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+.image-checkbox:hover::before {
+    content: 'Dodaj do polubionych';
+    position: absolute;
+    top: -30px;
+    right: 0;
+    background-color: var(--color-accent-1);
+    color: var(--color-accent-4);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 20;
+    transform: translateX(10%);
+    opacity: 0;
+    animation: fadeIn 0.2s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(10%);
+    }
 }

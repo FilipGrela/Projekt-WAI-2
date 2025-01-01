@@ -1,9 +1,17 @@
 <?php
-include_once __DIR__ . '/../models/ImageModel.php';
+require_once __DIR__ . '/../models/ImageModel.php';
 class GalleryController
 {
-    public function index() {
+    public function __construct()
+    {
         $imageModel = new ImageModel();
+        if (!isset($_SESSION['user_id'])) {
+            (new Router)->redirect('/login');
+        }
+    }
+    public function index() {
+
+        $imageModel = $this->imageModel ?? new ImageModel();
         $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $images = $imageModel->getPaginatedImages($currentPage, 8);
         $paginationLinks = $imageModel->getpaginationLinks(
@@ -12,12 +20,12 @@ class GalleryController
             $images['pagination']['totalPages']
         );
         $image_upload_message = '';
-        // Pass images to the view
+
         if (!isset($_SESSION['user_id'])) {
-            header("Location: /login");
+            (new Router)->redirect("Location: /login");
             exit;
         }
-        require_once __DIR__ . '/../views/gallery.php';
+        include_once __DIR__ . '/../views/gallery.php';
     }
 
     public function upload() {
@@ -31,18 +39,42 @@ class GalleryController
 
             try {
                 // Pass file details and metadata to the model
-                $_SESSION['image_upload_message'] = $imageModel->upload($_FILES['file'], $title, $author, $watermark_text);
+                $_SESSION['image_upload_message'] = $imageModel->upload($_FILES['file'], $watermark_text);
 
                 // Redirect to the gallery page after successful upload
                 header("Location: /gallery");
                 exit;
             } catch (Exception $e) {
-                // Handle errors here (e.g., file upload failed)
+
                 echo "<p>Error: " . $e->getMessage() . "</p>";
             }
         } else {
-            // If not a POST request or no file provided, return error
+
             echo "<p>Error: Invalid request or no file uploaded.</p>";
         }
     }
+
+    public function update_favourite_images(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $imageModel = $this->imageModel ?? new ImageModel();
+            if (isset($_POST['images']) && is_array($_POST['images'])) {
+
+                $selectedImages = $_POST['images'];
+            } else {
+                echo 'Nie wybrano żadnych zdjęć.';
+                return;
+            }
+
+
+            if (isset($_GET['fav']) && $_GET['fav'] == 'true') {
+                $imageModel->removeFavouriteImages($selectedImages);
+            }elseif (!isset($_GET['fav']) || (isset($_GET['fav']) && $_GET['fav'] == 'true')){
+                $imageModel->addFavouriteImages($selectedImages);
+            }
+        }
+
+        (new Router)->redirect('/gallery', '#gallery');
+    }
+
 }

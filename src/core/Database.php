@@ -36,11 +36,11 @@ class Database
             ]);
             return $user !== null;
         } catch (Exception $e) {
-            return false; // Handle as false in case of an error
+            return false;
         }
     }
 
-    public function add_user_to_db($email, $username, $password)
+    public function add_user_to_db($email, $username, $password): string
     {
         try {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);

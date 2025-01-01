@@ -50,6 +50,16 @@ $router->add('/gallery/upload', [
     'method' => 'upload'
 ]);
 
+$router->add('/gallery/add_image_to_favorites', [
+    'controller' => 'GalleryController',
+    'method' => 'update_favourite_images'
+]);
+
+$router->add('/debug', [
+    'controller' => 'DebugController',
+    'method' => 'index'
+]);
+
 // Process the current request
 $requestUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->dispatch($requestUrl);
