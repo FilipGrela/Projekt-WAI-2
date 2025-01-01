@@ -4,10 +4,10 @@ class GalleryController
 {
     public function __construct()
     {
-        $imageModel = new ImageModel();
         if (!isset($_SESSION['user_id'])) {
             (new Router)->redirect('/login');
         }
+        $imageModel = new ImageModel();
     }
     public function index() {
 
