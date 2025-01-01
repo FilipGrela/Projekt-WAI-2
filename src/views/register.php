@@ -4,6 +4,8 @@
     <link rel="stylesheet" href="css/style.css">
     <title>Rejestracja</title>
     <link rel="icon" href="img/travel.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <script src="scripts\remove_error_msg.js"></script>
 </head>
 <body>
 
@@ -29,8 +31,9 @@
             <div class="form-field">
                 <label for="password_rep">Powtórz hasło:</label>
                 <input type="password" id="password_rep" name="password_rep" placeholder="Hasło" required>
-                <?php if (isset($_SESSION['password_message']) && $_SESSION['password_message']): ?>
-                    <br><p class="error_message"><?= $_SESSION['password_message'] ?></p>
+                <?php $error_message = isset($_GET['error_message']) ? htmlspecialchars($_GET['error_message']) : null;;
+                if ($error_message): ?>
+                    <br><p class="error_message"><?= $error_message ?></p>
                 <?php endif; ?>
             </div>
 
@@ -42,7 +45,6 @@
             </div>
 
         </form>
-
 
     </div>
 </section>

@@ -7,6 +7,9 @@ class RegisterController
         $password_message = '';
     }
 
+    public function __construct()
+    {}
+
     public function add_user(){
         unset($_SESSION['password_message']);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,7 +24,7 @@ class RegisterController
 
             if ($error_msg) {
                 $_SESSION['password_message'] = $error_msg;
-                $this->redirect('/register');
+                $this->redirect('/register?error_message=Hasła się nie zgadzają');
             }else{
                 $this->redirect('/login');
             }

@@ -23,8 +23,7 @@ class LoginController
             $message = $result['msg'];
 
             if ($message != ''){
-                $_SESSION['login_message'] = $message;
-                (new Router)->redirect('/login');
+                (new Router)->redirect('/login?' . 'error_message=' . $message);
             }
 
             $_SESSION['user_id'] = $user_id;
@@ -34,5 +33,20 @@ class LoginController
             // If not a POST request or no file provided, return error
             echo "<p>Error: Invalid request.</p>";
         }
+    }
+
+
+    public function logout_user()
+    {
+        // Destroy the session
+        session_destroy();
+
+        // Unset all session variables
+        $_SESSION = [];
+
+
+        session_start();
+        // Redirect user to the login page
+        (new Router)->redirect('/login');
     }
 }

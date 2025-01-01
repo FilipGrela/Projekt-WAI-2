@@ -3,7 +3,6 @@ define('KB', 1024);
 define('MB', 1048576);
 define('GB', 1073741824);
 
-const destination = __DIR__ . '/../web/images/';
 const watermark_path = __DIR__ . '/../web/img/pg_logo.jpg';
 const MAX_FILE_SIZE = 1*MB; // Maximum allowed file size in bytes
 
@@ -14,9 +13,10 @@ class ImageModel {
     private $basePath;
     private $publicPath;
 
+
     public function __construct() {
-        $this->basePath = destination; // Path to the folder storing images
-        $this->publicPath = '/images/';              // Public-accessible path for images
+        $this->basePath = __DIR__ . '/../web/images/' . $_SESSION['user_id'] .'/';// Public-accessible path for images
+        $this->publicPath = '/images/' . $_SESSION['user_id'] . '/';
     }
 
     function upload($file, $title, $author, $watermark_text)
@@ -60,9 +60,12 @@ class ImageModel {
 
         $new_file_name = $this->generateUniqueFileName();
 
-        $file_original_destination = destination . $new_file_name . '.'.$file_ext;
-        $file_watermarked_destination = destination . $new_file_name . '_watermark.'.$file_ext;
-        $file_thumb_destination = destination . $new_file_name . '_thumb.' . $file_ext;
+        $file_original_destination = $this->basePath . $new_file_name . '.'.$file_ext;
+        $file_watermarked_destination = $this->basePath . $new_file_name . '_watermark.'.$file_ext;
+        $file_thumb_destination = $this->basePath . $new_file_name . '_thumb.' . $file_ext;
+
+
+        $this->ensureFolderExists($this->basePath);
 
         if (!move_uploaded_file($file_tmp, $file_original_destination)) {
             return 'File upload failed, move_uploaded_file error';
@@ -81,15 +84,24 @@ class ImageModel {
             $watermark_text
         );
 
-        $user_id = "uid";
 
         //przeniesc do core/db
         (new Database)->add_image_to_db(
             $_POST['image_author'],
             $_POST['image_title'],
             $new_file_name,
-            $user_id
+            $_SESSION['user_id']
         );
+    }
+
+
+    private function ensureFolderExists($folderPath)
+    {
+        if (!is_dir($folderPath)) {
+            if (!mkdir($folderPath, 0755, true)) {
+                throw new Exception("Failed to create folder: " . $folderPath);
+            }
+        }
     }
 
     private function isAllowedExtension($extension, $allowed_extensions) {

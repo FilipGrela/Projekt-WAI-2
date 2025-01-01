@@ -10,6 +10,9 @@
 <body>
 <section>
     <div id="gallery" class="round-corners">
+        <form action="/login/logout" method="post" class="search-form">
+            <button type="submit" class="button">Logout</button>
+        </form>
         <form action="/gallery/upload" method="post" enctype="multipart/form-data" class="upload-form">
             <h2>Upload Your Image</h2>
 

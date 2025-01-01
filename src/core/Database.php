@@ -25,6 +25,21 @@ class Database
     }
 
 
+    public function user_exists($email, $username): bool
+    {
+        try {
+            $user = $this->db->users->findOne([
+                '$or' => [
+                    ['email' => $email],
+                    ['username' => $username]
+                ]
+            ]);
+            return $user !== null;
+        } catch (Exception $e) {
+            return false; // Handle as false in case of an error
+        }
+    }
+
     public function add_user_to_db($email, $username, $password)
     {
         try {

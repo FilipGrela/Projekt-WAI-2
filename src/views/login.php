@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="css/style.css">
     <title>Logowanie</title>
     <link rel="icon" href="img/travel.png" type="image/x-icon">
+    <script src="scripts\remove_error_msg.js"></script>
 </head>
 <body>
 
@@ -29,8 +30,9 @@
                 </div>
             </div>
 
-            <?php if (isset($_SESSION['login_message']) && $_SESSION['login_message']): ?>
-                <br><p class="error_message"><?= $_SESSION['login_message'] ?></p>
+            <?php $error_message = isset($_GET['error_message']) ? htmlspecialchars($_GET['error_message']) : null;;
+            if ($error_message): ?>
+                <br><p class="error_message"><?= $error_message ?></p>
             <?php endif; ?>
 
         </form>

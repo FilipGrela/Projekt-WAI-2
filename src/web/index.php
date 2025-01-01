@@ -25,6 +25,11 @@ $router->add('/login/login_user', [
     'method' => 'login_user'
 ]);
 
+$router->add('/login/logout', [
+    'controller' => 'LoginController',
+    'method' => 'logout_user'
+]);
+
 $router->add('/register', [
     'controller' => 'RegisterController',
     'method' => 'index'
