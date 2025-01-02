@@ -16,17 +16,17 @@
 
             <div class="form-field">
                 <label for="email">Login:</label>
-                <input type="email" id="email" name="email" placeholder="your@email.here" required value="your@email.here">
+                <input type="email" id="email" name="email" placeholder="your@email.here" required>
             </div>
 
             <div class="form-field">
                 <label for="login">Login:</label>
-                <input type="text" id="login" name="login" placeholder="Login" required value="Login">
+                <input type="text" id="login" name="login" placeholder="Login" required>
             </div>
 
             <div class="form-field">
                 <label for="password">Hasło: 123</label>
-                <input type="password" id="password" name="password" placeholder="Hasło" required value="123">
+                <input type="password" id="password" name="password" placeholder="Hasło" required>
             </div>
             <div class="form-field">
                 <label for="password_rep">Powtórz hasło:</label>
