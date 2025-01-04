@@ -27,14 +27,17 @@
             <h2>Upload Your Image</h2>
 
             <label for="image_title" class="form-label">Title:</label>
-            <input type="text" name="image_title" id="image_title" class="form-field" required>
+            <input type="text" name="image_title" id="image_title" class="form-field">
 
             <label for="image_author" class="form-label">Author:</label>
-            <input type="text" name="image_author" id="image_author" class="form-field" required>
+            <input type="text" name="image_author" id="image_author" class="form-field">
+
             <label for="watermark_text" class="form-label">Watermark:</label>
             <input type="text" name="watermark_text" id="watermark_text" class="form-field" required>
+
             <label for="file" class="form-label">Choose File:</label>
             <input type="file" name="file" id="file" class="form-field" required>
+
             <button type="submit" class="button">Upload Image</button>
             <?php if (isset($_SESSION['image_upload_message']) && $_SESSION['image_upload_message']): ?>
                 <br><p class="error_message"><?= $_SESSION['image_upload_message']; ?></p>

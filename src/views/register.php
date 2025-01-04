@@ -25,7 +25,7 @@
             </div>
 
             <div class="form-field">
-                <label for="password">Hasło: 123</label>
+                <label for="password">Hasło:</label>
                 <input type="password" id="password" name="password" placeholder="Hasło" required>
             </div>
             <div class="form-field">
