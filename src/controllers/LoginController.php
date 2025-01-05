@@ -42,6 +42,6 @@ class LoginController
         session_destroy();
         session_start();
 
-        (new Router)->redirect('/gallery');
+        (new Router)->redirect('/login');
     }
 }

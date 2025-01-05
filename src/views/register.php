@@ -44,6 +44,11 @@
                 </div>
             </div>
 
+
+            <div style="display: flex; flex-direction: row; justify-content: center;">
+                <a class="button" href="/gallery">Kontynuuj bez logowania</a>
+            </div>
+
         </form>
 
     </div>

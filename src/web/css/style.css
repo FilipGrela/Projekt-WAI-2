@@ -144,6 +144,7 @@ section {
 }
 
 .button {
+    min-height: 50px;
     background: var(--color-accent-1);
     color: #fff;
     padding: 0.7rem 1.5rem;
