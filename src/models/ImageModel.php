@@ -141,7 +141,14 @@ class ImageModel {
         }
         list($w_width, $w_height) = getimagesize($watermark_path);
 
-        $source = imagecreatefromjpeg($source);
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        if ($extension === 'jpg' or $extension === 'jpeg'){
+            $source = imagecreatefromjpeg($source);
+        }else if ($extension === 'png'){
+            $source = imagecreatefrompng($source);
+        }else{
+            throw new Exception('Extension not allowed: ' . $extension);
+        }
         $watermark_path = imagecreatefromjpeg($watermark_path);
 
         $watermark_scale = 2;
@@ -170,7 +177,15 @@ class ImageModel {
         }
 
         list($old_width, $old_height) = getimagesize($source);
-        $old_image = imagecreatefromjpeg($source);
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        if ($extension === 'jpg' or $extension === 'jpeg'){
+            $old_image = imagecreatefromjpeg($source);
+        }else if ($extension === 'png'){
+            $old_image = imagecreatefrompng($source);
+        }else{
+            throw new Exception('Extension not allowed: ' . $extension);
+        }
+
         if ($old_image === false) {
             throw new Exception('Failed to load image from source: ' . $source);
         }
@@ -216,7 +231,7 @@ class ImageModel {
                 'full_image' => $imagePathFull,
                 'title' => !empty($imageDb['title']) ? $imageDb['title'] : 'Unknown',
                 'author' => !empty($imageDb['author']) ? $imageDb['author'] : 'Unknown',
-                'private' => $imageDb['private'],
+                'private' => isset($imageDb['private']) ? $imageDb['private'] : 0
             ];
         }
 
