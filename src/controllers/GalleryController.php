@@ -4,9 +4,6 @@ class GalleryController
 {
     public function __construct()
     {
-        if (!isset($_SESSION['user_id'])) {
-            (new Router)->redirect('/login');
-        }
         $imageModel = new ImageModel();
     }
     public function index() {
@@ -19,12 +16,7 @@ class GalleryController
             $images['pagination']['perPage'],
             $images['pagination']['totalPages']
         );
-        $image_upload_message = '';
 
-        if (!isset($_SESSION['user_id'])) {
-            (new Router)->redirect("Location: /login");
-            exit;
-        }
         include_once __DIR__ . '/../views/gallery.php';
     }
 
@@ -34,15 +26,16 @@ class GalleryController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['file']['name'])) {
             $title = htmlspecialchars($_POST['image_title'] ?? '');
             $author = htmlspecialchars($_POST['image_author'] ?? '');
+            $private = $_POST['private'] ?? 0;
             $watermark_text = htmlspecialchars($_POST['watermark_text'] ?? '');
             $imageModel = new ImageModel();
 
             try {
                 // Pass file details and metadata to the model
-                $_SESSION['image_upload_message'] = $imageModel->upload($_FILES['file'], $watermark_text);
+                $_SESSION['image_upload_message'] = $imageModel->upload($_FILES['file'], $watermark_text, $private);
 
                 // Redirect to the gallery page after successful upload
-                header("Location: /gallery");
+                (new Router)->redirect('/gallery', '#gallery');
                 exit;
             } catch (Exception $e) {
 

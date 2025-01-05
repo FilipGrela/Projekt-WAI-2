@@ -5,7 +5,6 @@ class LoginController
 {
     function __construct(){
         $this->db = new Database();
-
     }
     public function index(){
         if (isset($_SESSION['user_id'])){
@@ -43,6 +42,6 @@ class LoginController
         session_destroy();
         session_start();
 
-        (new Router)->redirect('/login');
+        (new Router)->redirect('/gallery');
     }
 }

@@ -10,17 +10,19 @@ require_once __DIR__ . '/../core/Database.php';
 
 class ImageModel {
     private $basePath;
+    private $guestBasePath;
     private $publicPath;
     private $database;
 
 
     public function __construct() {
-        $this->basePath = __DIR__ . '/../web/images/' . $_SESSION['user_id'] .'/';// Public-accessible path for images
-        $this->publicPath = '/images/' . $_SESSION['user_id'] . '/';
+        $this->guestBasePath = __DIR__ . '/../web/images/guest/';
+        $this->basePath = __DIR__ . '/../web/images/' . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'guest') . '/'; // Public-accessible path for images
+        $this->publicPath = '/images/' . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'guest') . '/';
         $this->database = new Database();
     }
 
-    function upload($file, $watermark_text)
+    function upload($file, $watermark_text, $private)
     {
         $file_name = $file['name'];
         $file_tmp = $file['tmp_name'];
@@ -61,13 +63,18 @@ class ImageModel {
 
         $new_file_name = $this->generateUniqueFileName();
 
-        $file_original_destination = $this->basePath . $new_file_name . '.'.$file_ext;
-        $file_watermarked_destination = $this->basePath . $new_file_name . '_watermark.'.$file_ext;
-        $file_thumb_destination = $this->basePath . $new_file_name . '_thumb.' . $file_ext;
+        $basePath = $this->basePath;
+        if ($private != 1) {
+            $basePath = $this->guestBasePath;
+        }
+
+        $file_original_destination = $basePath . $new_file_name . '.'.$file_ext;
+        $file_watermarked_destination = $basePath . $new_file_name . '_watermark.'.$file_ext;
+        $file_thumb_destination = $basePath . $new_file_name . '_thumb.' . $file_ext;
 
 
         try {
-            $this->ensureFolderExists($this->basePath);
+            $this->ensureFolderExists($basePath);
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -88,11 +95,15 @@ class ImageModel {
             watermark_path,
             $watermark_text
         );
+
+        $user_id = (isset($_SESSION['user_id']) and $private == 1) ? $_SESSION['user_id'] : 'guest';
+
         $this->database->add_image_to_db(
             $_POST['image_author'],
             $_POST['image_title'],
+            $private,
             $new_file_name,
-            $_SESSION['user_id']
+            $user_id
         );
     }
 
@@ -181,17 +192,18 @@ class ImageModel {
 
         // Fetch thumbnails only
         $images = isset($_GET['fav']) && $_GET['fav'] ? $this->getFavouriteImagesThumb() : $this->getUserImagesThumb();
-
         // Total Images and Pagination Info
         $totalImages = count($images);
         $totalPages = (int) ceil($totalImages / $perPage);
         $currentPage = max(1, min($page, $totalPages));  // Ensure valid page number
         $currentPageImages = array_slice($images, ($currentPage - 1) * $perPage, $perPage);
 
+
         // Prepare structured data for returning images metadata
         $imageData = [];
         foreach ($currentPageImages as $imagePath) {
-            $thumbnailPath = $this->publicPath . rawurlencode(basename($imagePath)); // Public path for the thumbnail
+            $imagePath = explode('/images/', $imagePath)[1];
+            $thumbnailPath = '/images/'.$imagePath; // Public path for the thumbnail
             $imagePathFull = str_replace("thumb", "watermark", $thumbnailPath);
 
             // Extract Image ID (everything before the underscore)
@@ -204,6 +216,7 @@ class ImageModel {
                 'full_image' => $imagePathFull,
                 'title' => !empty($imageDb['title']) ? $imageDb['title'] : 'Unknown',
                 'author' => !empty($imageDb['author']) ? $imageDb['author'] : 'Unknown',
+                'private' => $imageDb['private'],
             ];
         }
 
@@ -253,7 +266,14 @@ class ImageModel {
 
     function getUserImagesThumb()
     {
-        return glob("{$this->basePath}*_thumb.{jpg,jpeg,gif,png,bmp,webp}", GLOB_BRACE);
+        $thumbs = glob("{$this->basePath}*_thumb.{jpg,jpeg,gif,png,bmp,webp}", GLOB_BRACE);
+        
+        if (isset($_SESSION['user_id'])) {
+            $guestThumbs = glob("{$this->guestBasePath}*_thumb.{jpg,jpeg,gif,png,bmp,webp}", GLOB_BRACE);
+            $thumbs = array_merge($thumbs, $guestThumbs);
+        }
+        
+        return $thumbs;
     }
 
     function getpaginationLinks($page = 1, $perPage = 8, $totalPages){

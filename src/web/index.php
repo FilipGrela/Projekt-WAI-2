@@ -11,7 +11,7 @@ $router = new Router();
 // Define routes
 
 $router->add('/', [
-    'controller' => 'LoginController',
+    'controller' => 'GalleryController',
     'method' => 'index'
 ]);
 

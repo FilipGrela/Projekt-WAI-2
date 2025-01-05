@@ -15,10 +15,11 @@ class Database
         return $mongo->wai;
     }
 
-    public function add_image_to_db($autor, $title, $image_name, $user){
+    public function add_image_to_db($autor, $title, $private, $image_name, $user){
         $this->db->images->insertOne([
             'author' => $autor,
             'title' => $title,
+            'private' => $private,
             'image_name' => $image_name,
             'user' => $user,
         ]);

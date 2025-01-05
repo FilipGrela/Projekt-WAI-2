@@ -12,13 +12,17 @@
     <div  class="round-corners gallery-container">
         <div class="header">
             <form action="/login/logout" method="post" class="search-form">
-                <button type="submit" class="button">Logout</button>
+                <button type="submit" class="button">
+                    <?php if (isset($_SESSION['login'])) : ?>Wyloguj <?php else: ?>Zaloguj<?php endif; ?>
+                </button>
             </form>
             
             <div class="user-info">
                 <p>Zalogowano jako:</p>
                 <?php if (isset($_SESSION['login']) && $_SESSION['login']) : ?>
                     <p><b><?= htmlspecialchars($_SESSION['login']); ?></b></p>
+                <?php else: ?>
+                    <p><b>Gość</b></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -30,13 +34,21 @@
             <input type="text" name="image_title" id="image_title" class="form-field">
 
             <label for="image_author" class="form-label">Author:</label>
-            <input type="text" name="image_author" id="image_author" class="form-field">
+            <input type="text" name="image_author" id="image_author" class="form-field"
+                   value="<?php if (isset($_SESSION['login']) && $_SESSION['login']) : ?><?= htmlspecialchars($_SESSION['login']); ?><?php endif; ?>">
 
             <label for="watermark_text" class="form-label">Watermark:</label>
             <input type="text" name="watermark_text" id="watermark_text" class="form-field" required>
 
             <label for="file" class="form-label">Choose File:</label>
             <input type="file" name="file" id="file" class="form-field" required>
+
+            <?php if (isset($_SESSION['login'])): ?>
+                <label for="private" class="form-label">Private:</label>
+                <input type="checkbox" name="private" id="private" value="1">
+                <br>
+            <?php endif; ?>
+
 
             <button type="submit" class="button">Upload Image</button>
             <?php if (isset($_SESSION['image_upload_message']) && $_SESSION['image_upload_message']): ?>
@@ -68,6 +80,10 @@
                     <div class='gallery-image-details'>
                         <h3><?= $image['title']; ?></h3>
                         <p><?= $image['author']; ?></p>
+
+                        <?php if (isset($_SESSION['login']) && $_SESSION['login']) : ?>
+                            <p><?= $image['private'] == 1 ? 'Zdjęcie prywatne' : 'Zdjęcie publiczne'; ?></p>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
